@@ -30,12 +30,14 @@ public class SettingsActivity extends AppCompatActivity {
     private AlarmReceiver alarmReceiver = new AlarmReceiver();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
 
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -44,6 +46,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public class MyPreferenceFragment extends PreferenceFragment implements Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
+
+        public MyPreferenceFragment(){
+
+        }
+
 
         @BindString(R.string.key_daily_reminder)
         String reminder_daily;
@@ -75,7 +82,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             if (key.equals(reminder_daily)) {
                 if (isOn) {
-                    alarmReceiver.setRepeatingAlarm(getActivity(), alarmReceiver.TYPE_REPEATING, "17:13", getString(R.string.label_alarm_daily_reminder));
+                    alarmReceiver.setRepeatingAlarm(getActivity(), alarmReceiver.TYPE_REPEATING, "07:00", getString(R.string.label_alarm_daily_reminder));
                 } else {
                     alarmReceiver.cancelAlarm(getActivity(), alarmReceiver.TYPE_REPEATING);
                 }
@@ -86,7 +93,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             else if (key.equals(released_today)) {
                 if (isOn) {
-                    alarmReceiver.setRepeatingAlarm(getActivity(), alarmReceiver.TYPE_RELEASED, "17:09", getString(R.string.label_alarm_released_today));
+                    alarmReceiver.setRepeatingAlarm(getActivity(), alarmReceiver.TYPE_RELEASED, "08:00", getString(R.string.label_alarm_released_today));
                 }
                 else{
                     alarmReceiver.cancelAlarm(getActivity(), alarmReceiver.TYPE_RELEASED);
@@ -107,6 +114,8 @@ public class SettingsActivity extends AppCompatActivity {
             if (key.equals(setting_locale)) {
                 Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
                 startActivity(intent);
+                finish();
+
                 return true;
             }
 
