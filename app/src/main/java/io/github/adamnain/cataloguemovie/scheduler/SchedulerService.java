@@ -47,16 +47,16 @@ public class SchedulerService extends GcmTaskService {
         Time today = new Time(Time.getCurrentTimezone());
         today.setToNow();
 
-        int bulan = today.month;
+        int bulan = today.month+1;
         int hari = today.monthDay;
 
         if (bulan<10 && hari>9)
-            dateNow = today.year + "-0" + today.month + "-" + today.monthDay;
+            dateNow = today.year + "-0" + bulan + "-" + hari;
         else if (hari<10 && bulan>9)
-            dateNow = today.year + "-" + today.month + "-0" + today.monthDay;
+            dateNow = today.year + "-" + bulan + "-0" + hari;
         else if (bulan<10 && hari<10)
-            dateNow = today.year + "-0" + today.month + "-0" + today.monthDay;
-        else dateNow = today.year + "-" + today.month + "-" + today.monthDay;
+            dateNow = today.year + "-0" + bulan + "-0" + hari;
+        else dateNow = today.year + "-" + bulan + "-" + hari;
 
         //String timeNow = today.format("%k:%M:%S");
 
@@ -70,7 +70,7 @@ public class SchedulerService extends GcmTaskService {
                         String releaseDate = listMovies.get(i).getReleaseDate();
                         String title = listMovies.get(i).getTitle();
                         if (releaseDate.equals(dateNow))
-                            alarmReceiver.setRepeatingAlarm(getApplicationContext(), alarmReceiver.TYPE_REPEATING, "08:00", title + getString(R.string.label_alarm_released_today));
+                            alarmReceiver.setRepeatingAlarm(getApplicationContext(), alarmReceiver.TYPE_REPEATING, "10:00", title + getString(R.string.label_alarm_released_today));
                     }
                 }
                 else Toast.makeText(getApplicationContext(), "failed", Toast.LENGTH_SHORT).show();

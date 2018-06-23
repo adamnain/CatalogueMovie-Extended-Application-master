@@ -7,6 +7,7 @@ import android.preference.PreferenceActivity;
 import android.provider.Settings;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.Time;
 import android.widget.Toast;
 import butterknife.BindString;
 import butterknife.ButterKnife;
@@ -87,7 +88,25 @@ public class SettingsActivity extends AppCompatActivity {
             }
 
             else if (key.equals(released_today)) {
-                if (isOn) schedulerTask.createPeriodicTask();
+                if (isOn) {
+                    schedulerTask.createPeriodicTask();
+
+                    String dateNow;
+                    Time today = new Time(Time.getCurrentTimezone());
+                    today.setToNow();
+
+                    int bulan = today.month+1;
+                    int hari = today.monthDay;
+
+                    if (bulan<10 && hari>9)
+                        dateNow = today.year + "-0" + bulan + "-" + hari;
+                    else if (hari<10 && bulan>9)
+                        dateNow = today.year + "-" + bulan + "-0" + hari;
+                    else if (bulan<10 && hari<10)
+                        dateNow = today.year + "-0" + bulan + "-0" + hari;
+                    else dateNow = today.year + "-" + bulan + "-" + hari;
+                    Toast.makeText(SettingsActivity.this, dateNow, Toast.LENGTH_SHORT).show();
+                }
                 else schedulerTask.cancelPeriodicTask();
 
                 Toast.makeText(SettingsActivity.this, getString(R.string.label_daily_reminder) + " " + (isOn ? getString(R.string.label_activated) : getString(R.string.label_deactivated)), Toast.LENGTH_SHORT).show();
