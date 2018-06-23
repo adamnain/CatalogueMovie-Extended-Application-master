@@ -11,18 +11,29 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.format.Time;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.List;
 
+import io.github.adamnain.cataloguemovie.BuildConfig;
 import io.github.adamnain.cataloguemovie.R;
+import io.github.adamnain.cataloguemovie.model.ResponseMovies;
+import io.github.adamnain.cataloguemovie.model.Result;
+import io.github.adamnain.cataloguemovie.service.UtilsApi;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AlarmReceiver extends BroadcastReceiver {
     public static final String TYPE_ONE_TIME = "OneTimeAlarm";
     public static final String TYPE_REPEATING = "RepeatingAlarm";
     public static final String EXTRA_MESSAGE = "message";
     public static final String EXTRA_TYPE = "type";
+    String dateNow;
+    String message;
 
     private final int NOTIF_ID_ONETIME = 100;
     private final int NOTIF_ID_REPEATING = 101;
@@ -31,15 +42,25 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        String type = intent.getStringExtra(EXTRA_TYPE);
-        String message = intent.getStringExtra(EXTRA_MESSAGE);
+    public void onReceive(final Context context, Intent intent) {
+        final String type = intent.getStringExtra(EXTRA_TYPE);
+        message = intent.getStringExtra(EXTRA_MESSAGE);
 
         String title = "Movie Reminder";
         int notifId = type.equalsIgnoreCase(TYPE_ONE_TIME) ? NOTIF_ID_ONETIME : NOTIF_ID_REPEATING;
 
         Log.v("ON RECIEVE",title+" "+notifId);
-        showAlarmNotification(context, title, message, notifId);
+
+        if (message.equals(", Now On Cinema!")){
+            getTitleMovie(context);
+            //showAlarmNotification(context, title, message, notifId);
+        }
+        else {
+            showAlarmNotification(context, title, message, notifId);
+        }
+
+        //showAlarmNotification(context, title, message, notifId);
+
     }
 
     private void showAlarmNotification(Context context, String title, String message, int notifId){
@@ -89,4 +110,55 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         Toast.makeText(context, "Repeating alarm dibatalkan", Toast.LENGTH_SHORT).show();
     }
+
+    public void getTitleMovie(final Context context){
+        final String language = "en-US";
+        final String sort_by = "popularity.desc";
+        final String include_adult = "false";
+        final String include_video = "false";
+        final String page = "1";
+
+        Time today = new Time(Time.getCurrentTimezone());
+        today.setToNow();
+
+        int bulan = today.month+1;
+        int hari = today.monthDay;
+
+        if (bulan<10 && hari>9)
+            dateNow = today.year + "-0" + bulan + "-" + hari;
+        else if (hari<10 && bulan>9)
+            dateNow = today.year + "-" + bulan + "-0" + hari;
+        else if (bulan<10 && hari<10)
+            dateNow = today.year + "-0" + bulan + "-0" + hari;
+        else dateNow = today.year + "-" + bulan + "-" + hari;
+
+        Call<ResponseMovies> call = UtilsApi.getAPIService().getUpcoming(BuildConfig.MOVIE_DB_API, language, sort_by, include_adult, include_video, page);
+        call.enqueue(new Callback<ResponseMovies>() {
+            @Override
+            public void onResponse(Call<ResponseMovies> call, Response<ResponseMovies> response) {
+                if (response.isSuccessful()) {
+                    List<Result> listMovies = response.body().getResults();
+                    for (int i = 0; i < listMovies.size(); i++) {
+                        String releaseDate = listMovies.get(i).getReleaseDate();
+                        String title = listMovies.get(i).getTitle();
+                        if (releaseDate.equals(dateNow)){
+                            //alarmReceiver.setRepeatingAlarm(getApplicationContext(), alarmReceiver.TYPE_REPEATING, "10:00", title + getString(R.string.label_alarm_released_today));
+                            message = title + message;
+                            showAlarmNotification(context, title, message, 100);
+                        }
+                    }
+                }
+                else Toast.makeText(context, "failed", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseMovies> call, Throwable t) {
+                Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+        //return message;
+    }
+
+
 }

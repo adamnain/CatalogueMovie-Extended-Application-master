@@ -17,8 +17,8 @@ public class SchedulerTask {
     public void createPeriodicTask() {
         Task periodicTask = new PeriodicTask.Builder()
                 .setService(io.github.adamnain.cataloguemovie.scheduler.SchedulerService.class)
-                .setPeriod(3*60)
-                .setFlex(60)
+                .setPeriod(60*1000)
+                .setFlex(20)
                 .setTag(io.github.adamnain.cataloguemovie.scheduler.SchedulerService.TAG_RELEASED_TODAY)
                 .setPersisted(true)
                 .build();

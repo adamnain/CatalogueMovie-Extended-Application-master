@@ -1,5 +1,8 @@
 package io.github.adamnain.cataloguemovie;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -9,6 +12,9 @@ import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.Time;
 import android.widget.Toast;
+
+import java.util.Calendar;
+
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import io.github.adamnain.cataloguemovie.scheduler.AlarmReceiver;
@@ -31,6 +37,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     private AlarmReceiver alarmReceiver = new AlarmReceiver();
     private SchedulerTask schedulerTask;
+
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,25 +99,13 @@ public class SettingsActivity extends AppCompatActivity {
 
             else if (key.equals(released_today)) {
                 if (isOn) {
-                    schedulerTask.createPeriodicTask();
-
-                    String dateNow;
-                    Time today = new Time(Time.getCurrentTimezone());
-                    today.setToNow();
-
-                    int bulan = today.month+1;
-                    int hari = today.monthDay;
-
-                    if (bulan<10 && hari>9)
-                        dateNow = today.year + "-0" + bulan + "-" + hari;
-                    else if (hari<10 && bulan>9)
-                        dateNow = today.year + "-" + bulan + "-0" + hari;
-                    else if (bulan<10 && hari<10)
-                        dateNow = today.year + "-0" + bulan + "-0" + hari;
-                    else dateNow = today.year + "-" + bulan + "-" + hari;
-                    Toast.makeText(SettingsActivity.this, dateNow, Toast.LENGTH_SHORT).show();
+                    //schedulerTask.createPeriodicTask();
+                    alarmReceiver.setRepeatingAlarm(getActivity(), alarmReceiver.TYPE_REPEATING, "15:08", getString(R.string.label_alarm_released_today));
                 }
-                else schedulerTask.cancelPeriodicTask();
+                else{
+                    //schedulerTask.cancelPeriodicTask();
+                    alarmReceiver.cancelAlarm(getActivity(), alarmReceiver.TYPE_REPEATING);
+                }
 
                 Toast.makeText(SettingsActivity.this, getString(R.string.label_daily_reminder) + " " + (isOn ? getString(R.string.label_activated) : getString(R.string.label_deactivated)), Toast.LENGTH_SHORT).show();
                 return true;
