@@ -28,14 +28,14 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AlarmReceiver extends BroadcastReceiver {
-    public static final String TYPE_ONE_TIME = "OneTimeAlarm";
+    public static final String TYPE_RELEASED = "ReleasedTodayAlarm";
     public static final String TYPE_REPEATING = "RepeatingAlarm";
     public static final String EXTRA_MESSAGE = "message";
     public static final String EXTRA_TYPE = "type";
     String dateNow;
     String message;
 
-    private final int NOTIF_ID_ONETIME = 100;
+    private final int NOTIF_ID_RELEASED = 100;
     private final int NOTIF_ID_REPEATING = 101;
 
     public AlarmReceiver() {
@@ -47,19 +47,17 @@ public class AlarmReceiver extends BroadcastReceiver {
         message = intent.getStringExtra(EXTRA_MESSAGE);
 
         String title = "Movie Reminder";
-        int notifId = type.equalsIgnoreCase(TYPE_ONE_TIME) ? NOTIF_ID_ONETIME : NOTIF_ID_REPEATING;
+        int notifId = type.equalsIgnoreCase(TYPE_RELEASED) ? NOTIF_ID_RELEASED : NOTIF_ID_REPEATING;
 
         Log.v("ON RECIEVE",title+" "+notifId);
 
-        if (message.equals(", Now On Cinema!")){
-            getTitleMovie(context);
-            //showAlarmNotification(context, title, message, notifId);
+        if (message.equals(context.getResources().getString(R.string.label_alarm_released_today))){
+            getTitleMovie(context, notifId);
         }
         else {
             showAlarmNotification(context, title, message, notifId);
         }
 
-        //showAlarmNotification(context, title, message, notifId);
 
     }
 
@@ -94,7 +92,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         if (calendar.before(Calendar.getInstance())) calendar.add(Calendar.DATE, 1);
 
-        int requestCode = NOTIF_ID_REPEATING;
+        int requestCode = type.equalsIgnoreCase(TYPE_RELEASED) ? NOTIF_ID_RELEASED : NOTIF_ID_REPEATING;
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -104,14 +102,14 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void cancelAlarm(Context context, String type){
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
-        int requestCode = type.equalsIgnoreCase(TYPE_ONE_TIME) ? NOTIF_ID_ONETIME : NOTIF_ID_REPEATING;
+        int requestCode = type.equalsIgnoreCase(TYPE_RELEASED) ? NOTIF_ID_RELEASED : NOTIF_ID_REPEATING;
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0);
         alarmManager.cancel(pendingIntent);
 
         Toast.makeText(context, "Repeating alarm dibatalkan", Toast.LENGTH_SHORT).show();
     }
 
-    public void getTitleMovie(final Context context){
+    public void getTitleMovie(final Context context, final int notifId){
         final String language = "en-US";
         final String sort_by = "popularity.desc";
         final String include_adult = "false";
@@ -142,9 +140,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                         String releaseDate = listMovies.get(i).getReleaseDate();
                         String title = listMovies.get(i).getTitle();
                         if (releaseDate.equals(dateNow)){
-                            //alarmReceiver.setRepeatingAlarm(getApplicationContext(), alarmReceiver.TYPE_REPEATING, "10:00", title + getString(R.string.label_alarm_released_today));
                             message = title + message;
-                            showAlarmNotification(context, title, message, 100);
+                            showAlarmNotification(context, title, message, notifId);
                         }
                     }
                 }
@@ -157,7 +154,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show();
             }
         });
-        //return message;
     }
 
 

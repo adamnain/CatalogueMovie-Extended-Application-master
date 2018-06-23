@@ -1,50 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="@dimen/margin_container"
-    android:orientation="vertical"
-    tools:context=".DetailActivity">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/img_backdrop_detail"
+    <LinearLayout
+        android:layout_margin="@dimen/margin_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/warning" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/iv_star"
-            android:layout_width="@dimen/star_size"
-            android:layout_height="@dimen/star_size"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_star_before" />
-    </RelativeLayout>
+            android:id="@+id/img_backdrop_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/warning" />
 
-    <TextView
-        android:id="@+id/tv_title_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/judul"
-        android:textSize="@dimen/textSize_title" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <ImageView
+                android:id="@+id/iv_star"
+                android:layout_width="@dimen/star_size"
+                android:layout_height="@dimen/star_size"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_star_before" />
+        </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_release_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/release_date" />
-
-    <TextView
-        android:id="@+id/tv_overview_detail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/overview" />
+        <TextView
+            android:id="@+id/tv_title_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/judul"
+            android:textSize="@dimen/textSize_title" />
 
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tv_release_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/release_date" />
+
+        <TextView
+            android:id="@+id/tv_overview_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/overview" />
+    </LinearLayout>
+
+</ScrollView>
+
