@@ -35,7 +35,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_search);
 
         // Memasang Toolbar pada Aplikasi
         Toolbar toolbar = findViewById(R.id.tb_toolbar);

@@ -1,8 +1,5 @@
 package io.github.adamnain.cataloguemovie;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -10,15 +7,10 @@ import android.preference.PreferenceActivity;
 import android.provider.Settings;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.Time;
 import android.widget.Toast;
-
-import java.util.Calendar;
-
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import io.github.adamnain.cataloguemovie.scheduler.AlarmReceiver;
-import io.github.adamnain.cataloguemovie.scheduler.SchedulerTask;
 
 
 /**
@@ -36,10 +28,6 @@ import io.github.adamnain.cataloguemovie.scheduler.SchedulerTask;
 public class SettingsActivity extends AppCompatActivity {
 
     private AlarmReceiver alarmReceiver = new AlarmReceiver();
-    private SchedulerTask schedulerTask;
-
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
 
 
     @Override
@@ -78,7 +66,6 @@ public class SettingsActivity extends AppCompatActivity {
             findPreference(released_today).setOnPreferenceChangeListener(this);
             findPreference(setting_locale).setOnPreferenceClickListener(this);
 
-            schedulerTask = new SchedulerTask(getActivity());
         }
 
         @Override
@@ -88,7 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             if (key.equals(reminder_daily)) {
                 if (isOn) {
-                    alarmReceiver.setRepeatingAlarm(getActivity(), alarmReceiver.TYPE_REPEATING, "07:00", getString(R.string.label_alarm_daily_reminder));
+                    alarmReceiver.setRepeatingAlarm(getActivity(), alarmReceiver.TYPE_REPEATING, "17:13", getString(R.string.label_alarm_daily_reminder));
                 } else {
                     alarmReceiver.cancelAlarm(getActivity(), alarmReceiver.TYPE_REPEATING);
                 }
@@ -99,12 +86,10 @@ public class SettingsActivity extends AppCompatActivity {
 
             else if (key.equals(released_today)) {
                 if (isOn) {
-                    //schedulerTask.createPeriodicTask();
-                    alarmReceiver.setRepeatingAlarm(getActivity(), alarmReceiver.TYPE_REPEATING, "15:08", getString(R.string.label_alarm_released_today));
+                    alarmReceiver.setRepeatingAlarm(getActivity(), alarmReceiver.TYPE_RELEASED, "17:09", getString(R.string.label_alarm_released_today));
                 }
                 else{
-                    //schedulerTask.cancelPeriodicTask();
-                    alarmReceiver.cancelAlarm(getActivity(), alarmReceiver.TYPE_REPEATING);
+                    alarmReceiver.cancelAlarm(getActivity(), alarmReceiver.TYPE_RELEASED);
                 }
 
                 Toast.makeText(SettingsActivity.this, getString(R.string.label_daily_reminder) + " " + (isOn ? getString(R.string.label_activated) : getString(R.string.label_deactivated)), Toast.LENGTH_SHORT).show();
